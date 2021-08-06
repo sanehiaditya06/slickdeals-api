@@ -35,6 +35,7 @@ def scrape_main_site(headers):
     html = s.get(url=url, headers=headers, verify=False, timeout=15)
     soup = BeautifulSoup(html.text, 'html.parser')
     products = soup.find_all('div',  {'class': 'box onPopularDeals'})
+    print(products)
     for product in products:
         item = [product.find('img', {'class': 'dealImage'})['title'],
                 product.find('span', {'class': 'priceShippingTruncate popularDeal'}).text,
