@@ -19,12 +19,14 @@ hardware_type = [HardwareType.MOBILE__PHONE]
 user_agent_rotator = UserAgent(software_names=software_names, hardware_type=hardware_type)
 CONFIG = dotenv.dotenv_values()
 
+proxyObject = FreeProxy(country_id=[CONFIG['LOCATION']], rand=True)
+
 
 
 INSTOCK = []
 
 
-def scrape_main_site(headers):
+def scrape_main_site(headers, proxy):
     """
     Scrape the site and adds each item to an array
     :return:
@@ -126,6 +128,11 @@ def monitor():
     logging.info(msg='Successfully started monitor')
     discord_webhook('initial')
     start = 0
+    proxy_no = 0
+
+    proxy_list = CONFIG['PROXY'].split('%')
+    proxy = {"http": proxyObject.get()} if proxy_list[0] == "" else {"http": f"http://{proxy_list[proxy_no]}"}
+
 
 
 
@@ -137,7 +144,7 @@ def monitor():
         i = i + 1
         print(f'[{datetime.datetime.utcnow()}] - Cycle #{i} Complete')
         try:
-            items = remove_duplicates(scrape_main_site(headers))
+            items = remove_duplicates(scrape_main_site(headers, proxy))
             for item in items:
                 check = False
                 if keywords == '':
@@ -155,6 +162,11 @@ def monitor():
             print(f"Exception found '{e}' - Rotating proxy and user-agent")
             logging.error(e)
             headers = {'User-Agent': user_agent_rotator.get_random_user_agent()}
+            if CONFIG['PROXY'] == "":
+                proxy = {"http": proxyObject.get()}
+            else:
+                proxy_no = 0 if proxy_no == (len(proxy_list) - 1) else proxy_no + 1
+                proxy = {"http": f"http://{proxy_list[proxy_no]}"}
 
 
 
