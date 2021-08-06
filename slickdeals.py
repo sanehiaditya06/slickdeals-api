@@ -37,10 +37,10 @@ def scrape_main_site(headers):
     products = soup.find_all('div',  {'class': 'dealRow'})
     print(products[0])
     for product in products:
-        item = [product.find('a', {'class': 'track-popularDealLink bp-p-dealLink bp-c-link'}).text,
+        item = [product.find('div', {'class': 'dealTitle'}).text,
                 product.find('div', {'class': 'priceCol'}).text,
                 product.find('a', {'class': 'track-popularDealLink bp-p-dealLink bp-c-link'})['href'],
-                product.find('img', {'class': 'dealImg'})['src']]
+                product.find('img', {'class': 'dealImg'})['data-original']]
         items.append(item)
     return items
 
