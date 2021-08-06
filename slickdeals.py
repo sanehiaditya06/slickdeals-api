@@ -50,8 +50,15 @@ def discord_webhook(product_item):
     Sends a Discord webhook notification to the specified webhook URL
     :param product_item: An array of the product's details
     :return: None
+    
+    
     """
-   # product_image = product_item[2][product_item[2].rfind('/')+1:product_item[2].rfind('.html')]
+    print(product_item[0])
+    print(product_item[1])
+    print(product_item[2])
+    print(product_item[3])
+    
+    # product_image = product_item[2][product_item[2].rfind('/')+1:product_item[2].rfind('.html')]
     data = {}
     data["embeds"] = []
     embed = {}
