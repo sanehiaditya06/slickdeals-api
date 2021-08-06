@@ -54,8 +54,6 @@ def discord_webhook(product_item):
     """
    # product_image = product_item[2][product_item[2].rfind('/')+1:product_item[2].rfind('.html')]
     data = {}
-    data["username"] = CONFIG['USERNAME']
-    data["avatar_url"] = CONFIG['AVATAR_URL']
     data["embeds"] = []
     embed = {}
     if product_item == 'initial':
