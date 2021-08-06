@@ -130,7 +130,7 @@ def monitor():
     print('STARTING MONITOR')
     logging.info(msg='Successfully started monitor')
     discord_webhook('initial')
-    start = 0
+    start = 1
 
 
     headers = {'User-Agent': user_agent_rotator.get_random_user_agent()}
