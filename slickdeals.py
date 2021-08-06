@@ -35,7 +35,6 @@ def scrape_main_site(headers):
     html = s.get(url=url, headers=headers, verify=False, timeout=15)
     soup = BeautifulSoup(html.text, 'html.parser')
     products = soup.find_all('div',  {'class': 'dealRow'})
-    print(products[0])
     for product in products:
         item = [product.find('div', {'class': 'dealTitle'}).text,
                 product.find('div', {'class': 'priceCol'}).text,
@@ -131,7 +130,7 @@ def monitor():
     print('STARTING MONITOR')
     logging.info(msg='Successfully started monitor')
     discord_webhook('initial')
-    start = 0
+    start = 1
 
 
     headers = {'User-Agent': user_agent_rotator.get_random_user_agent()}
