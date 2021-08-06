@@ -34,6 +34,7 @@ def scrape_main_site(headers):
     s = requests.Session()
     html = s.get(url=url, headers=headers, verify=False, timeout=15)
     soup = BeautifulSoup(html.text, 'html.parser')
+    print(soup)
     products = soup.find_all('div',  {'class': 'box onPopularDeals'})
     print(products)
     for product in products:
