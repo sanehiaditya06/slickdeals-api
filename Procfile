@@ -1,1 +1,1 @@
-monitor: python adidas.py
+monitor: python slickdeals.py
