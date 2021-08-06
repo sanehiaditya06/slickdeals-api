@@ -35,13 +35,13 @@ def scrape_main_site(headers):
     html = s.get(url=url, headers=headers, verify=False, timeout=15)
     soup = BeautifulSoup(html.text, 'html.parser')
     print(soup)
-    products = soup.find_all('div',  {'class': 'box onPopularDeals'})
+    products = soup.find_all('div',  {'class': 'dealRow'})
     print(products)
     for product in products:
-        item = [product.find('img', {'class': 'dealImage'})['title'],
-                product.find('span', {'class': 'priceShippingTruncate popularDeal'}).text,
-                product.find('a', {'class': 'dealTitle'})['href'],
-                product.find('img', {'class': 'dealImage'})['src']]
+        item = [product.find('img', {'class': 'dealImg'})['title'],
+                product.find('div', {'class': 'priceCol'}).text,
+                product.find('a', {'class': 'track-popularDealLink bp-p-dealLink bp-c-link'})['href'],
+                product.find('img', {'class': 'dealImg'})['src']]
         items.append(item)
     return items
 
@@ -68,7 +68,7 @@ def discord_webhook(product_item):
         embed["title"] = product_item[0]  # Item Name
         embed['url'] = f"https://slickdeals.net{product_item[2]}"  # Item link
         embed["thumbnail"] = {'url': product_item[3]}  # Item image
-        embed["fields"]= [{'name': 'Price and Store: ', 'value': product_item[1].replace("\n"," "), 'inline' : False},
+        embed["fields"]= [{'name': 'Price: ', 'value': product_item[1].replace("\n"," "), 'inline' : False},
         #{'name': 'Rating: ', 'value': product_item[3], 'inline': False},
         {'name':'Quick Links: ', 'value': '[Popular](https://slickdeals.net/deals/)' + ' | ' + '[Deal Categories](https://slickdeals.net/deal-categories/)', 'inline': True}]
         embed["author"]= {'name': 'slickdeals.com','url': 'https://slickdeals.net/deals/', 'icon_url': 'https://i.imgur.com/ZdGihMp.png'}
