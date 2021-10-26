@@ -8,6 +8,7 @@ import time
 import urllib3
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, HardwareType
+import os
 
 software_names = [SoftwareName.CHROME.value]
 hardware_type = [HardwareType.MOBILE__PHONE]
@@ -71,7 +72,7 @@ def discord_webhook(product_item):
         embed["timestamp"] = str(datetime.datetime.utcnow())
         data["embeds"].append(embed)
 
-        result = requests.post(CONFIG['WEBHOOK'], data=json.dumps(data), headers={"Content-Type": "application/json"})
+        result = requests.post(os.environ['WEBHOOK'], data=json.dumps(data), headers={"Content-Type": "application/json"})
 
     try:
         result.raise_for_status()
