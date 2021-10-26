@@ -1,7 +1,6 @@
 from typing import Text
 import requests
 from bs4 import BeautifulSoup
-import logging
 import dotenv
 import datetime
 import json
@@ -9,10 +8,6 @@ import time
 import urllib3
 from random_user_agent.user_agent import UserAgent
 from random_user_agent.params import SoftwareName, HardwareType
-from fp.fp import FreeProxy
-
-logging.basicConfig(filename='vnv.log', filemode='a', format='%(asctime)s - %(name)s - %(message)s',
-                    level=logging.DEBUG)
 
 software_names = [SoftwareName.CHROME.value]
 hardware_type = [HardwareType.MOBILE__PHONE]
@@ -36,7 +31,7 @@ def scrape_main_site(headers):
     soup = BeautifulSoup(html.text, 'html.parser')
     products = soup.find_all('div',  {'class': 'dealRow'})
     for product in products:
-        item = [product.find('div', {'class': 'dealTitle'}).text,
+        item = [product.find('div', {'class': 'dealTitle'}).text.strip(),
                 product.find('div', {'class': 'priceCol'}).text,
                 product.find('a', {'class': 'track-popularDealLink bp-p-dealLink bp-c-link'})['href'],
                 product.find('img', {'class': 'dealImg'})['data-original']]
@@ -49,15 +44,7 @@ def discord_webhook(product_item):
     Sends a Discord webhook notification to the specified webhook URL
     :param product_item: An array of the product's details
     :return: None
-    
-    
     """
-    print(product_item[0])
-    print(product_item[1])
-    print(product_item[2])
-    print(product_item[3])
-    
-    # product_image = product_item[2][product_item[2].rfind('/')+1:product_item[2].rfind('.html')]
     data = {}
     data["embeds"] = []
     embed = {}
@@ -70,11 +57,13 @@ def discord_webhook(product_item):
 
         result = requests.post("https://discord.com/api/webhooks/872167233068077126/92V_fo9FeFaAOttd8_N5Jg562VJdUbcHYNpYdNDu50fXl87s-8QgaYIg01ESqCqJUKTt", data=json.dumps(data), headers={"Content-Type": "application/json"})
     else:
-        embed["title"] = product_item[0]  # Item Name
+        if 'NEW' in product_item[0]:
+          embed["title"] = product_item[0].replace("NEW","") # Item Name without NEW
+        else:
+          embed["title"] = product_item[0] # Item Name
         embed['url'] = f"https://slickdeals.net{product_item[2]}"  # Item link
         embed["thumbnail"] = {'url': product_item[3]}  # Item image
-        embed["fields"]= [{'name': 'Price: ', 'value': f"USD - {product_item[1]}", 'inline' : False},
-        #{'name': 'Rating: ', 'value': product_item[3], 'inline': False},
+        embed["fields"]= [{'name': 'Price:', 'value': f"{product_item[1][product_item[1].rfind('$'):]}", 'inline' : False}, #item price stripped
         {'name':'Quick Links: ', 'value': '[Popular](https://slickdeals.net/deals/)' + ' | ' + '[Deal Categories](https://slickdeals.net/deal-categories/)', 'inline': True}]
         embed["author"]= {'name': 'slickdeals.com','url': 'https://slickdeals.net/deals/', 'icon_url': 'https://i.imgur.com/ZdGihMp.png'}
         embed["color"] = int(CONFIG['COLOUR'])
@@ -88,10 +77,9 @@ def discord_webhook(product_item):
         result.raise_for_status()
     except requests.exceptions.HTTPError as err:
         print(err)
-        logging.error(msg=err)
     else:
         print("Payload delivered successfully, code {}.".format(result.status_code))
-        logging.info("Payload delivered successfully, code {}.".format(result.status_code))
+
 
 
 def checker(item):
@@ -157,7 +145,6 @@ def monitor():
             start = 0
         except Exception as e:
             print(f"Exception found '{e}' - Rotating proxy and user-agent")
-            logging.error(e)
             headers = {'User-Agent': user_agent_rotator.get_random_user_agent()}
 
 
